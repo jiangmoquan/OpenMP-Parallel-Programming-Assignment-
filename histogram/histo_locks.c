@@ -395,11 +395,19 @@ long* histogram(char* fn_input) {
     histo[i] = 0;
   }
 
+  /* */
+  omp_set_nested(1);
+
+
   t_start = omp_get_wtime();
 
   /* obtain histogram from image, repeated 100 times */
   for (m=0; m<100; m++) {
+
+    #pragma omp parallel for
     for (i=0; i<image->row; i++) {
+      
+      #pragma omp parallel for
       for (j=0; j<image->col; j++) {
         histo[image->content[i][j]]++;
       }
