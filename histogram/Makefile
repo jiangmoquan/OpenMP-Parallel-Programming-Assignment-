@@ -7,12 +7,9 @@ LIB = -lm -lc
 UNITFILES = 
 
 #------------ EXECUTABLE FILES ---------------
-all : histo.o histo_locks.o
 
-histo : histo.o $(UNITFILES)
+histo : histo.o histo_locks.o  $(UNITFILES)
 	$(CC) $(CFLAGS) -o histo histo.o $(UNITFILES) $(LIB)
-
-histo_locks : histo_locks.o $(UNITFILES)
 	$(CC) $(CFLAGS) -o histo_locks histo_locks.o $(UNITFILES) $(LIB)
 
 clean:
