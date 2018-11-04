@@ -397,7 +397,10 @@ long* histogram(char* fn_input) {
 
   /* */
   omp_set_nested(1);
-
+  omp_lock_t mylocks[256];
+  for (i=0; i<256; i++) {
+    omp_init_lock(&mylocks[i]);
+  }
 
   t_start = omp_get_wtime();
 
@@ -407,7 +410,10 @@ long* histogram(char* fn_input) {
     for (i=0; i<image->row; i++) {      
       #pragma omp parallel for
       for (j=0; j<image->col; j++) {
+        int tmp = image->content[i][j];
+	omp_set_lock(&mylocks[tmp]);
         histo[image->content[i][j]]++;
+	omp_unset_lock(&mylocks[tmp]);
       }
     }
   }
