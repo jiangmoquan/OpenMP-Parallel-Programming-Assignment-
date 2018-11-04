@@ -7,6 +7,7 @@ LIB = -lm -lc
 UNITFILES = 
 
 #------------ EXECUTABLE FILES ---------------
+all : histo.o histo_locks.o
 
 histo : histo.o $(UNITFILES)
 	$(CC) $(CFLAGS) -o histo histo.o $(UNITFILES) $(LIB)
