@@ -400,7 +400,9 @@ long* histogram(char* fn_input) {
   /* obtain histogram from image, repeated 100 times */
   for (m=0; m<100; m++) {
     for (i=0; i<image->row; i++) {
+      #pragma omp parallel for
       for (j=0; j<image->col; j++) {
+	#pragma omp atomic
         histo[image->content[i][j]]++;
       }
     }
