@@ -84,8 +84,8 @@ int  hypre_BoomerAMGSeqRelax( hypre_CSRMatrix *A,
        res = f_data[i];
        for (jj = A_diag_i[i]+1; jj < A_diag_i[i+1]; jj++)
        {
-	 ii = A_diag_j[jj];
-	 res -= A_diag_data[jj] * u_data[ii];
+          ii = A_diag_j[jj];
+          res -= A_diag_data[jj] * u_data[ii];
        }
        u_data[i] = res / A_diag_data[A_diag_i[i]];
      }
