@@ -15,6 +15,9 @@
 
 #include "headers.h"
 
+extern void Timer_Start(char *);
+extern void Timer_Stop(char *);
+extern void Timer_Print();
 
 //
 const int testIter   = 1000;
