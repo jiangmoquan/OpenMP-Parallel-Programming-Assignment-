@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 
   printf("\nTotal Wall time = %f seconds. \n", del_wtime);
 
-
+  Timer_Print();
   return  0;
 
 }

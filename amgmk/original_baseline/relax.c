@@ -38,6 +38,8 @@
 /*--------------------------------------------------------------------------
  * hypre_BoomerAMGSeqRelax
  *--------------------------------------------------------------------------*/
+extern void Timer_Start(char *);
+extern void Timer_Stop(char *);
 
 int  hypre_BoomerAMGSeqRelax( hypre_CSRMatrix *A,
                         hypre_Vector    *f,
@@ -82,11 +84,13 @@ int  hypre_BoomerAMGSeqRelax( hypre_CSRMatrix *A,
      if ( A_diag_data[A_diag_i[i]] != 0.0)
      {
        res = f_data[i];
+       Timer_Start("relax_for_jj");
        for (jj = A_diag_i[i]+1; jj < A_diag_i[i+1]; jj++)
        {
           ii = A_diag_j[jj];
           res -= A_diag_data[jj] * u_data[ii];
        }
+       Timer_Stop("relax_for_jj");
        u_data[i] = res / A_diag_data[A_diag_i[i]];
      }
    }
