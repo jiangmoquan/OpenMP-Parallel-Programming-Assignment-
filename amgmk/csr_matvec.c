@@ -142,6 +142,7 @@ hypre_CSRMatrixMatvec( double           alpha,
    if (num_rownnz < xpar*(num_rows))
    {
       if ( num_vectors==1 ) {
+        #pragma omp parallel for private(tempx, m, jj)
         for (i = 0; i < num_rownnz; i++) {
           m = A_rownnz[i];
           tempx = y_data[m];
@@ -151,6 +152,7 @@ hypre_CSRMatrixMatvec( double           alpha,
         }
 
       } else {
+        #pragma omp parallel for private(tempx, m, j, jj)
         for (i = 0; i < num_rownnz; i++) {
           m = A_rownnz[i];
           for ( j=0; j<num_vectors; ++j ) {
@@ -176,6 +178,8 @@ hypre_CSRMatrixMatvec( double           alpha,
         }
 
       } else {
+
+        #pragma omp parallel for private(temp, j, jj)
         for (i = 0; i < num_rows; i++) {
           for ( j=0; j<num_vectors; ++j ) {
             temp = y_data[ j*vecstride_y + i*idxstride_y ];
