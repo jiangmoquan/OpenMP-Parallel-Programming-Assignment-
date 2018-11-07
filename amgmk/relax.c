@@ -83,7 +83,7 @@ int  hypre_BoomerAMGSeqRelax( hypre_CSRMatrix *A,
      {
        res = f_data[i];
 
-       #pragma omp parallel for private(ii, res)
+       
        for (jj = A_diag_i[i]+1; jj < A_diag_i[i+1]; jj++)
        {
           ii = A_diag_j[jj];
