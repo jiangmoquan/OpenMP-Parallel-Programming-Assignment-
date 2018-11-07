@@ -402,7 +402,7 @@ long* histogram(char* fn_input) {
     for (i=0; i<image->row; i++) {
       #pragma omp parallel for
       for (j=0; j<image->col; j++) {
-	#pragma omp atomic
+        #pragma omp atomic
         histo[image->content[i][j]]++;
       }
     }
