@@ -141,55 +141,50 @@ hypre_CSRMatrixMatvec( double           alpha,
 
    if (num_rownnz < xpar*(num_rows))
    {
-      for (i = 0; i < num_rownnz; i++)
-      {
-         m = A_rownnz[i];
+      if ( num_vectors==1 ) {
+        for (i = 0; i < num_rownnz; i++) {
+          m = A_rownnz[i];
+          tempx = y_data[m];
+          for (jj = A_i[m]; jj < A_i[m+1]; jj++) 
+            tempx +=  A_data[jj] * x_data[A_j[jj]];
+          y_data[m] = tempx;
+        }
 
-         /*
-          * for (jj = A_i[m]; jj < A_i[m+1]; jj++)
-          * {
-          *         j = A_j[jj];   
-          *  y_data[m] += A_data[jj] * x_data[j];
-          * } */
-         if ( num_vectors==1 )
-         {
-            tempx = y_data[m];
+      } else {
+        for (i = 0; i < num_rownnz; i++) {
+          m = A_rownnz[i];
+          for ( j=0; j<num_vectors; ++j ) {
+            tempx = y_data[ j*vecstride_y + m*idxstride_y ];
             for (jj = A_i[m]; jj < A_i[m+1]; jj++) 
-               tempx +=  A_data[jj] * x_data[A_j[jj]];
-            y_data[m] = tempx;
-         }
-         else
-            for ( j=0; j<num_vectors; ++j )
-            {
-               tempx = y_data[ j*vecstride_y + m*idxstride_y ];
-               for (jj = A_i[m]; jj < A_i[m+1]; jj++) 
-                  tempx +=  A_data[jj] * x_data[ j*vecstride_x + A_j[jj]*idxstride_x ];
-               y_data[ j*vecstride_y + m*idxstride_y] = tempx;
-            }
+              tempx +=  A_data[jj] * x_data[ j*vecstride_x + A_j[jj]*idxstride_x ];
+            y_data[ j*vecstride_y + m*idxstride_y] = tempx;
+          }
+        }
       }
 
    }
    else
    {
-      for (i = 0; i < num_rows; i++)
-      {
-         if ( num_vectors==1 )
-         {
-            temp = y_data[i];
-            for (jj = A_i[i]; jj < A_i[i+1]; jj++)
-               temp += A_data[jj] * x_data[A_j[jj]];
-            y_data[i] = temp;
-         }
-         else
-            for ( j=0; j<num_vectors; ++j )
-            {
-               temp = y_data[ j*vecstride_y + i*idxstride_y ];
-               for (jj = A_i[i]; jj < A_i[i+1]; jj++)
-               {
-                  temp += A_data[jj] * x_data[ j*vecstride_x + A_j[jj]*idxstride_x ];
-               }
-               y_data[ j*vecstride_y + i*idxstride_y ] = temp;
+      if ( num_vectors==1 ) {
+
+        #pragma omp parallel for private(temp, jj)
+        for (i = 0; i < num_rows; i++) {
+          temp = y_data[i];
+          for (jj = A_i[i]; jj < A_i[i+1]; jj++)
+            temp += A_data[jj] * x_data[A_j[jj]];
+          y_data[i] = temp;
+        }
+
+      } else {
+        for (i = 0; i < num_rows; i++) {
+          for ( j=0; j<num_vectors; ++j ) {
+            temp = y_data[ j*vecstride_y + i*idxstride_y ];
+            for (jj = A_i[i]; jj < A_i[i+1]; jj++) {
+              temp += A_data[jj] * x_data[ j*vecstride_x + A_j[jj]*idxstride_x ];
             }
+            y_data[ j*vecstride_y + i*idxstride_y ] = temp;
+          }
+        }
       }
    }
 
