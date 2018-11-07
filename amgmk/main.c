@@ -187,8 +187,13 @@ void test_Relax()
   values[3] = -1;
 
   A = GenerateSeqLaplacian(nx, ny, nz, values, &y, &x, &sol);
+  
 
   hypre_SeqVectorSetConstantValues(x,1);
+
+  hypre_CSRMatrixPrint(A, "print_A.out");
+  hypre_SeqVectorPrint(sol, "print_sol.out" );
+  hypre_SeqVectorPrint(x, "print_x.out" );
 
   t0 = omp_get_wtime();
   for (i=0; i<testIter; ++i)
