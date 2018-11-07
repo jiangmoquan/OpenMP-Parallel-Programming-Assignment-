@@ -20,7 +20,7 @@ extern void Timer_Stop(char *);
 extern void Timer_Print();
 
 //
-const int testIter   = 1;
+const int testIter   = 1000;
 double totalWallTime = 0.0;
 
 // 

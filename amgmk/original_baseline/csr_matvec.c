@@ -35,6 +35,10 @@
 #include "headers.h"
 #include <assert.h>
 
+extern void Timer_Start(char *);
+extern void Timer_Stop(char *);
+extern void Timer_Print();
+
 /*--------------------------------------------------------------------------
  * hypre_CSRMatrixMatvec
  *--------------------------------------------------------------------------*/
@@ -135,9 +139,10 @@ hypre_CSRMatrixMatvec( double           alpha,
     *-----------------------------------------------------------------*/
 
 /* use rownnz pointer to do the A*x multiplication  when num_rownnz is smaller than num_rows */
-
+   Timer_Start("all");
    if (num_rownnz < xpar*(num_rows))
    {
+      Timer_Start("front");
       for (i = 0; i < num_rownnz; i++)
       {
          m = A_rownnz[i];
@@ -149,7 +154,7 @@ hypre_CSRMatrixMatvec( double           alpha,
           *  y_data[m] += A_data[jj] * x_data[j];
           * } */
          if ( num_vectors==1 )
-         {
+         {  
             tempx = y_data[m];
             for (jj = A_i[m]; jj < A_i[m+1]; jj++) 
                tempx +=  A_data[jj] * x_data[A_j[jj]];
@@ -164,20 +169,25 @@ hypre_CSRMatrixMatvec( double           alpha,
                y_data[ j*vecstride_y + m*idxstride_y] = tempx;
             }
       }
+      Timer_Stop("front");
 
    }
    else
    {
+      Timer_Start("post");
       for (i = 0; i < num_rows; i++)
       {
          if ( num_vectors==1 )
          {
+	   Timer_Start("num_vectors == 1");
             temp = y_data[i];
             for (jj = A_i[i]; jj < A_i[i+1]; jj++)
                temp += A_data[jj] * x_data[A_j[jj]];
             y_data[i] = temp;
+           Timer_Stop("num_vectors == 1");
          }
-         else
+         else {
+            Timer_Start("1");
             for ( j=0; j<num_vectors; ++j )
             {
                temp = y_data[ j*vecstride_y + i*idxstride_y ];
@@ -187,9 +197,12 @@ hypre_CSRMatrixMatvec( double           alpha,
                }
                y_data[ j*vecstride_y + i*idxstride_y ] = temp;
             }
+	    Timer_Stop("1");
+         }
       }
+      Timer_Stop("post");
    }
-
+   Timer_Stop("all");
 
    /*-----------------------------------------------------------------
     * y = alpha*y
