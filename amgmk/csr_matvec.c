@@ -104,10 +104,11 @@ hypre_CSRMatrixMatvec( double           alpha,
 
     if (alpha == 0.0)
     {
-       for (i = 0; i < num_rows*num_vectors; i++)
-          y_data[i] *= beta;
+      #pragma omp parallel for
+      for (i = 0; i < num_rows*num_vectors; i++)
+        y_data[i] *= beta;
 
-       return ierr;
+      return ierr;
     }
 
    /*-----------------------------------------------------------------------
@@ -120,13 +121,15 @@ hypre_CSRMatrixMatvec( double           alpha,
    {
       if (temp == 0.0)
       {
-	 for (i = 0; i < num_rows*num_vectors; i++)
-	    y_data[i] = 0.0;
+        #pragma omp parallel for
+        for (i = 0; i < num_rows*num_vectors; i++)
+          y_data[i] = 0.0;
       }
       else
       {
-	 for (i = 0; i < num_rows*num_vectors; i++)
-	    y_data[i] *= temp;
+        #pragma omp parallel for
+        for (i = 0; i < num_rows*num_vectors; i++)
+          y_data[i] *= temp;
       }
    }
 
@@ -197,8 +200,9 @@ hypre_CSRMatrixMatvec( double           alpha,
 
    if (alpha != 1.0)
    {
+      #pragma omp parallel for
       for (i = 0; i < num_rows*num_vectors; i++)
-	 y_data[i] *= alpha;
+        y_data[i] *= alpha;
    }
 
    return ierr;
@@ -269,9 +273,9 @@ hypre_CSRMatrixMatvecT( double           alpha,
 
    if (alpha == 0.0)
    {
-
+      #pragma omp parallel for
       for (i = 0; i < num_cols*num_vectors; i++)
-	 y_data[i] *= beta;
+        y_data[i] *= beta;
 
       return ierr;
    }
@@ -286,15 +290,15 @@ hypre_CSRMatrixMatvecT( double           alpha,
    {
       if (temp == 0.0)
       {
-
-	 for (i = 0; i < num_cols*num_vectors; i++)
-	    y_data[i] = 0.0;
+        #pragma omp parallel for
+        for (i = 0; i < num_cols*num_vectors; i++)
+          y_data[i] = 0.0;
       }
       else
       {
-
-	 for (i = 0; i < num_cols*num_vectors; i++)
-	    y_data[i] *= temp;
+        #pragma omp parallel for
+        for (i = 0; i < num_cols*num_vectors; i++)
+          y_data[i] *= temp;
       }
    }
 
@@ -383,9 +387,9 @@ hypre_CSRMatrixMatvecT( double           alpha,
 
    if (alpha != 1.0)
    {
-
+      #pragma omp parallel for
       for (i = 0; i < num_cols*num_vectors; i++)
-	 y_data[i] *= alpha;
+        y_data[i] *= alpha;
    }
 
    return ierr;
